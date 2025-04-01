@@ -1,0 +1,5 @@
+-- CREATE FOOTBALLERS TABLE
+CREATE TABLE football_players(
+	id INTEGER NOT NULL,
+	player_name VARCHAR(50) NOT NULL
+);
