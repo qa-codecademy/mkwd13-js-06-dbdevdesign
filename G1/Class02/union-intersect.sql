@@ -20,3 +20,38 @@ INSERT INTO sales_2024 VALUES
     ('Laptop', 1299.99),
     ('Mouse', 29.99),
     ('Monitor', 299.99);
+
+-- UNION (WITHOUT DUPLICATES)
+SELECT product_name 
+FROM sales_2023
+UNION ALL
+SELECT product_name
+FROM sales_2024;
+
+-- UNION ALL (WITH DUPLICATES)
+SELECT product_name 
+FROM sales_2023
+UNION
+SELECT product_name
+FROM sales_2024;
+
+-- INTERSECT (COMMON PRODUCTS)
+SELECT product_name 
+FROM sales_2023
+INTERSECT
+SELECT product_name
+FROM sales_2024;
+
+-- EXCEPT (products only in 2023)
+SELECT product_name 
+FROM sales_2023
+EXCEPT
+SELECT product_name
+FROM sales_2024;
+
+-- EXCEPT (products only in 2024)
+SELECT product_name 
+FROM sales_2024
+EXCEPT
+SELECT product_name
+FROM sales_2023;
