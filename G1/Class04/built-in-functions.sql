@@ -33,3 +33,34 @@ INSERT INTO orders (order_date, total_amount, customer_name, shipping_address) V
 ('2024-02-15', 89.99, 'Bob Wilson', '789 Pine Rd, Village'),
 ('2024-03-01', 2499.97, 'Alice Brown', '321 Elm St, City'),
 ('2024-03-15', 149.98, 'Charlie Davis', '654 Maple Dr, Town');
+
+SELECT * FROM orders;
+
+-- STRING FUNCTIONS
+-- LENGTH and TRIMMING
+SELECT 
+	name,
+	LENGTH(name) AS name_length,
+	UPPER(name) AS uppercase_name,
+	LOWER(name) AS lowecase_name
+FROM products;
+
+-- STRING CONCATENATION
+SELECT
+	customer_name,
+	shipping_address,
+	customer_name || ' - ' || shipping_address AS full_address
+FROM orders;
+
+-- SUBSTRING (In Postgres the indexes start from 1)
+SELECT 
+	name,
+	SUBSTRING(name FROM 1 FOR 3) AS first_three_letters,
+	SUBSTRING(description FROM 1 FOR 10) || '...' AS short_description
+FROM products;
+
+-- REPLACE
+SELECT 
+	shipping_address,
+	REPLACE(shipping_address, 'City', 'Metropolis')
+FROM orders;
