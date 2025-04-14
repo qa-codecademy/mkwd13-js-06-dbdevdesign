@@ -1,5 +1,7 @@
 **HOMEWORK**
 
+### Use the existiong movies database to solve the requirements.
+
 1. Find average rating per movie
 
 2. Create and query a temp table with movies where total revenue (domestic plus international) is greated than 100000000
