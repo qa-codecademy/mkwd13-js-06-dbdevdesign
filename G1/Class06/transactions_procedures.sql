@@ -35,32 +35,37 @@ INSERT INTO transactions (from_account_id, to_account_id, amount) VALUES (1, 2, 
 COMMIT;
 
 -- Procedure: Transfer with validation and rollback
-CREATE OR REPLACE PROCEDURE transfer_money(sender INT, receiver INT, amt DECIMAL)
-LANGUAGE plpgsql AS $$
+CREATE OR REPLACE PROCEDURE transfer_money(
+  sender   INT,
+  receiver INT,
+  amt      DECIMAL
+)
+LANGUAGE plpgsql
+AS $$
 BEGIN
-	-- Start transaction
-	-- BEGIN
-		IF amt <= 0 THEN
-            RAISE EXCEPTION 'Amount must be positive';
-        END IF;
-		IF NOT EXISTS (
-			SELECT 1 FROM bank_accounts WHERE account_id = sender AND balance >= amt
-		) THEN 
-			RAISE EXCEPTION 'Insufficient funds!';
-		END IF;
+  IF amt <= 0 THEN
+    RAISE EXCEPTION 'Amount must be positive';
+  END IF;
 
-		UPDATE bank_accounts SET balance = balance - amt WHERE account_id = sender;
-		UPDATE bank_accounts SET balance = balance + amt WHERE account_id = receiver;
-		INSERT INTO transactions (from_account_id, to_account_id, amount) VALUES (sender, receiver, amt);
+  UPDATE bank_accounts
+    SET balance = balance - amt
+    WHERE account_id = sender
+      AND balance    >= amt;
+  IF NOT FOUND THEN
+    RAISE EXCEPTION 'Insufficient funds!';
+  END IF;
 
-		-- COMMIT; -- all good!
-	-- EXCEPTION 
-	-- 	WHEN OTHERS THEN
-	-- 		ROLLBACK; -- Rollback if any failure
-	-- 		RAISE; -- rethrow the exception
-	-- END;
+  UPDATE bank_accounts
+    SET balance = balance + amt
+    WHERE account_id = receiver;
+
+  INSERT INTO transactions(from_account_id, to_account_id, amount)
+    VALUES (sender, receiver, amt);
+
+  COMMIT;
 END;
 $$;
+
 
 -- USAGE
 CALL transfer_money(1, 2, 50);
