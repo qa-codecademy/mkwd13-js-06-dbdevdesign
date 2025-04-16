@@ -23,3 +23,46 @@ CREATE TABLE transactions (
 
 -- Sample data
 INSERT INTO bank_accounts (balance) VALUES (1000), (500);
+
+SELECT * FROM bank_accounts;
+SELECT * FROM transactions;
+
+-- Basic transaction: Transfer $100 from account 1 to 2
+BEGIN;
+UPDATE bank_accounts SET balance = balance - 100 WHERE account_id = 1;
+UPDATE bank_accounts SET balance = balance + 100 WHERE account_id = 2;
+INSERT INTO transactions (from_account_id, to_account_id, amount) VALUES (1, 2, 100);
+COMMIT;
+
+-- Procedure: Transfer with validation and rollback
+CREATE OR REPLACE PROCEDURE transfer_money(sender INT, receiver INT, amt DECIMAL)
+LANGUAGE plpgsql AS $$
+BEGIN
+	-- Start transaction
+	-- BEGIN
+		IF amt <= 0 THEN
+            RAISE EXCEPTION 'Amount must be positive';
+        END IF;
+		IF NOT EXISTS (
+			SELECT 1 FROM bank_accounts WHERE account_id = sender AND balance >= amt
+		) THEN 
+			RAISE EXCEPTION 'Insufficient funds!';
+		END IF;
+
+		UPDATE bank_accounts SET balance = balance - amt WHERE account_id = sender;
+		UPDATE bank_accounts SET balance = balance + amt WHERE account_id = receiver;
+		INSERT INTO transactions (from_account_id, to_account_id, amount) VALUES (sender, receiver, amt);
+
+		-- COMMIT; -- all good!
+	-- EXCEPTION 
+	-- 	WHEN OTHERS THEN
+	-- 		ROLLBACK; -- Rollback if any failure
+	-- 		RAISE; -- rethrow the exception
+	-- END;
+END;
+$$;
+
+-- USAGE
+CALL transfer_money(1, 2, 50);
+CALL transfer_money(3, 1, 600);
+		
