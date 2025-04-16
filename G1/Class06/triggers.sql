@@ -63,16 +63,17 @@ $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION notify_price_change()
 RETURNS TRIGGER AS $$
-DECLARE 
-	change_percent DECIMAL(5, 2);
+DECLARE
+    change_percent DECIMAL(5,2);
 BEGIN
-	change_percent := ((NEW.price - OLD.price) / OLD.price * 100)::DECIMAL(5, 2);
-	IF ABS(change_percent) > 20 THEN
-		INSERT INTO price_change_notifications
-			(product_id, old_price, new_price, change_percentage)
-		VALUES (NEW.product_id, OLD.price, NEW.price, change_percent);
-	END IF;
-	RETURN NEW;
+    change_percent := ((NEW.price - OLD.price) / OLD.price * 100)::DECIMAL(5,2);
+    IF ABS(change_percent) > 20 THEN
+        INSERT INTO price_change_notifications 
+            (product_id, old_price, new_price, change_percentage)
+        VALUES 
+            (NEW.product_id, OLD.price, NEW.price, change_percent);
+    END IF;
+    RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -113,3 +114,13 @@ AFTER UPDATE ON products
 FOR EACH ROW 
 WHEN (NEW.price IS DISTINCT FROM OLD.price)
 EXECUTE FUNCTION notify_price_change();
+
+SELECT * FROM products;
+SELECT * FROM categories;
+SELECT * FROM audit_log;
+SELECT * FROM price_change_notifications;
+
+INSERT INTO categories (name) VALUES ('Electronics');
+INSERT INTO products (name, price, category_id) VALUES ('Laptop', 1000, 1);
+UPDATE products SET price = 2800 WHERE product_id = 1;
+INSERT INTO products (name, price, category_id) VALUES ('Mouse', 300, 1);
