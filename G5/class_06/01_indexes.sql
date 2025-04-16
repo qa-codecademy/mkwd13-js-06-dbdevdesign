@@ -30,5 +30,4 @@ SELECT * FROM users
 WHERE is_active = false
 
 -- Compound index
-
 CREATE INDEX idx_users_email_username ON users(username, email)
