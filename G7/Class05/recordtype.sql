@@ -26,4 +26,13 @@ $$ LANGUAGE plpgsql;
 
 SELECT get_actor_by_id(1);
 
-SELECT * FROM get_actor_by_id(1); -- FIX THIS
+
+-- works
+SELECT get_actor_by_id(1);
+
+-- does not work
+SELECT * FROM get_actor_by_id(1);
+
+-- works 
+SELECT * FROM get_actor_by_id(1)
+AS (first_name VARCHAR(50), last_name VARCHAR(50), birth_date DATE, biography TEXT);
