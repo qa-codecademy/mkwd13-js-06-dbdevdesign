@@ -1,6 +1,7 @@
 import express from "express";
 import { AppDataSource } from "./data-source.js";
-// import routers here
+import { userRouter } from "./routes/users.js";
+import { postRouter } from "./routes/posts.js";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -12,7 +13,8 @@ async function main() {
     await AppDataSource.initialize();
     console.log("Database connection established");
 
-    // add routers here
+    app.use("/api/users", userRouter);
+    app.use("/api/posts", postRouter);
 
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
