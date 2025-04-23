@@ -51,4 +51,35 @@ class PostService {
 
     return post;
   }
+
+  async updatePost(id, postData, authorId) {
+    const post = await this.getPostById(id);
+
+    // verify post ownership
+    if (post.authorId !== authorId) {
+      throw new Error("Unauthorized to update");
+    }
+
+    // Prevent updating certain fields
+    delete postData.id;
+    delete postData.authorId;
+    delete postData.createdAt;
+
+    await this.postRepository.update(id, postData);
+    return this.getPostById(id);
+  }
+
+  async deletePost(id, authorId) {
+    const post = await this.getPostById(id);
+
+    // verify post ownership
+    if (post.authorId !== authorId) {
+      throw new Error("Unauthorized to update");
+    }
+
+    await this.postRepository.delete(id);
+    return true;
+  }
 }
+
+export const postService = new PostService();
