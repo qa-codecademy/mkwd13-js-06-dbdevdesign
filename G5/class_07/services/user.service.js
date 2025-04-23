@@ -24,6 +24,18 @@ class UserService {
 
 		return users;
 	}
+
+	async getUserById(id) {
+		const user = await this.userRepository.find({
+			where: { id },
+		});
+
+		if (!user || !user.length) {
+			throw new Error(`User with id: ${id} not found.`);
+		}
+
+		return user;
+	}
 }
 
 export const userService = new UserService();

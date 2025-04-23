@@ -4,6 +4,7 @@ import express from 'express';
 import router from './routes/index.js';
 import { DataSource } from 'typeorm';
 import dbConfig from './database/config.js';
+import errorHandler from './middleware/error-handler.js';
 
 const app = express();
 
@@ -17,6 +18,9 @@ export const AppDataSource = new DataSource(dbConfig);
 app.use(express.json());
 
 app.use('/api', router);
+
+// Middleware part 2 :D
+app.use(errorHandler);
 
 (async () => {
 	try {
